@@ -178,6 +178,25 @@ app.post('/admin-command/broadcast', isAuthenticated, async (req, res) => {
   }
 });
 
+app.post('/admin-command/shutdown', isAuthenticated, async (req, res) => {
+  try {
+    const { seconds, message } = req.body;
+
+    if (!seconds || !message) {
+      return res.status(400).json({ success: false, message: 'Missing seconds or message' });
+    }
+
+    const shutdownCommand = `Shutdown ${seconds} "${message}"`;
+    await executeRconCommand(shutdownCommand);
+
+    res.json({ success: true, message: `Shutdown initiated. Server will shut down in ${seconds} seconds. Message: ${message}` });
+  } catch (error) {
+    console.error('Error initiating server shutdown:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+
 app.use('/server-control', isAuthenticated, async (req, res) => {
   try {
     const containers = await getPalworldContainers();

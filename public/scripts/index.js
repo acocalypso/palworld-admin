@@ -127,3 +127,38 @@ function kickPlayer(steamid) {
   const bootstrapScript = document.createElement('script');
   bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
   document.body.appendChild(bootstrapScript);
+
+  
+function shutdownServer() {
+  const seconds = document.getElementById('shutdownSeconds').value;
+  const message = document.getElementById('shutdownMessage').value;
+
+  fetch('/admin-command/shutdown', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ seconds, message }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+
+    // Clear the input boxes
+    document.getElementById('shutdownSeconds').value = '';
+    document.getElementById('shutdownMessage').value = '';
+
+    // Display success or failure popup
+    if (data.success) {
+      alert(`Shutdown initiated. Server will shut down in ${seconds} seconds. Message: ${message}`);
+    } else {
+      alert('Error initiating server shutdown. Please try again.');
+    }
+  })
+  .catch(error => {
+    console.error('Error initiating server shutdown:', error);
+    
+    // Display error popup
+    alert('Error initiating server shutdown. Please try again.');
+  });
+}

@@ -22,6 +22,14 @@
       <input type="text" class="form-control" id="broadcastMessage">
       <button class="btn btn-primary mt-2" onclick="broadcastMessage()">Broadcast</button>
     </div>
+
+    <div class="mb-3">
+      <label for="shutdownSeconds" class="form-label">Shutdown Server (Seconds):</label>
+      <input type="number" class="form-control" id="shutdownSeconds">
+      <label for="shutdownMessage" class="form-label">Shutdown Message:</label>
+      <input type="text" class="form-control" id="shutdownMessage">
+      <button class="btn btn-danger mt-2" onclick="shutdownServer()">Shutdown Server</button>
+    </div>
     
     <h1 class="text-center">Online Player: <span id="onlinePlayerCount"><%= onlinePlayerCount %></span></h1>
 
