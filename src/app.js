@@ -199,8 +199,9 @@ app.post('/admin-command/shutdown', isAuthenticated, async (req, res) => {
 
 app.use('/server-control', isAuthenticated, async (req, res) => {
   try {
+    const rconResponseInfo = await executeRconCommand('info'); // Fetch RCON response
     const containers = await getPalworldContainers();
-    res.render('serverControl', { containers, user: req.user });
+    res.render('serverControl', { containers, rconResponseInfo, user: req.user });
   } catch (error) {
     console.error('Error fetching Palworld containers:', error);
     res.status(500).send('Internal Server Error');
