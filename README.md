@@ -20,3 +20,5 @@ Setup:
 copy .env.default to .env
 
 Modify .env as needed
+
+![Screenshot 2024-02-04 123200](https://github.com/acocalypso/palworld-admin/assets/2846629/bcc9d4a8-2327-4735-b9cc-05086f273790)
