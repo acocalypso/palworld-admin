@@ -3,7 +3,8 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const localAuth = require('../auth/localAuth');
 const flash = require('connect-flash');
-const { connectRcon, disconnectRcon, executeRconCommand } = require('../rcon/rcon');
+//const { connectRcon, disconnectRcon, executeRconCommand } = require('../rcon/rcon');
+const { executeRconCommand } = require('../rcon/rcon');
 const ejs = require('ejs');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
@@ -48,7 +49,7 @@ app.use(
   app.use(passport.session());
   
   // RCON Connection on App startup
-  connectRcon();
+  //connectRcon();
   
   app.get('/login', async (req, res) => {
     // If it's the first launch, redirect to account creation page
@@ -114,12 +115,12 @@ app.get('/', isAuthenticated, async (req, res) => {
     // Authenticated users can access this route
     try {
       // Example: Execute RCON command and display the result on the main page
-      const rconResponse = await executeRconCommand('showplayers');
+      const rconResponseShowPlayers = await executeRconCommand('showplayers');
+      console.log(rconResponseShowPlayers);
+      const rconResponseInfo = await executeRconCommand('info');
       
       // Ensure that the 'user' object is available in the request
-      const user = req.user;
-  
-      res.render('index', { rconResponse, user });
+      res.render('index', { rconResponseShowPlayers,rconResponseInfo: rconResponseInfo || '', user: req.user });
     } catch (error) {
       console.log(error);
       res.status(500).send(error);
@@ -128,8 +129,3 @@ app.get('/', isAuthenticated, async (req, res) => {
 
 // Start the server
 app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}`));
-
-// RCON Connection close on App exit
-process.on('exit', () => {
-  disconnectRcon();
-});

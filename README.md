@@ -6,10 +6,10 @@ This is a work in progress admin pannel for Palworld Server written in Node JS
 Working Features:
 * local auth
 * show online players
+* show version number
 
 Planned features:
 * Login discord auth 
-* show version number
 * Bann Players
 * Kick Players
 * Server Stats (Memory, disk, CPU)
@@ -20,10 +20,3 @@ Setup:
 copy .env.default to .env
 
 Modify .env as needed
-
-As the rcon library used has an issue with packets the following modification needs to be done:
-
-https://github.com/janispritzkau/rcon-client/issues/21
-
-you need to change the file node_modules/rcon-client/lib/rcon.js around line 135 it should like this
-const id = this.authenticated ? (packet.id + 1) : this.requestId - 1;
