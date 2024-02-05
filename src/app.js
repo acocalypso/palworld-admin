@@ -3,8 +3,8 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const localAuth = require('../auth/localAuth');
 const flash = require('connect-flash');
-//const { connectRcon, disconnectRcon, executeRconCommand } = require('../rcon/rcon');
 const { executeRconCommand } = require('../rcon/rcon');
+const { getServerStats } = require('./serverStats');
 const ejs = require('ejs');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
@@ -48,8 +48,6 @@ app.use(
   app.use(passport.initialize());
   app.use(passport.session());
   
-  // RCON Connection on App startup
-  //connectRcon();
   
   app.get('/login', async (req, res) => {
     // If it's the first launch, redirect to account creation page
@@ -111,12 +109,35 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
+app.use('/server-stats', async (req, res, next) => {
+  try {
+    const rconResponseInfo = await executeRconCommand('info');
+    res.locals.rconResponseInfo = rconResponseInfo;
+    next();
+  } catch (error) {
+    console.log("Error fetching server info:", error);
+    res.locals.rconResponseInfo = ''; // Set a default value or handle the error as needed
+    next();
+  }
+});
+
+app.get('/server-stats', isAuthenticated, async (req, res) => {
+  try {
+    // Retrieve server stats (you need to implement this part)
+    const serverStats = await getServerStats();
+  
+    // Render the server stats template
+    res.render('server-stats', { serverStats, user: req.user });
+  } catch (error) {
+    console.log("Error getting server stats:", error);
+    res.status(500).send(error);
+  }
+});
+
 app.get('/', isAuthenticated, async (req, res) => {
     // Authenticated users can access this route
     try {
-      // Example: Execute RCON command and display the result on the main page
       const rconResponseShowPlayers = await executeRconCommand('showplayers');
-      console.log(rconResponseShowPlayers);
       const rconResponseInfo = await executeRconCommand('info');
       
       // Ensure that the 'user' object is available in the request

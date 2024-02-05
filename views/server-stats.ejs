@@ -1,0 +1,85 @@
+<!-- views/server-stats.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+  <title>Server Stats</title>
+  <style>
+    body {
+      padding-top: 56px; /* Adjust based on the height of your navbar */
+    }
+  </style>
+  <!-- Include Raphael library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+  <!-- Include JustGage library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.4.0/justgage.min.js"></script>
+</head>
+<body>
+  <!-- Header Partial -->
+  <%- include('partials/header') %>
+
+  <!-- Main content -->
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-4">
+        <h3>CPU Load</h3>
+        <div id="cpuLoadGauge"></div>
+      </div>
+      <div class="col-md-4">
+        <h3>Memory</h3>
+        <div id="memoryGauge"></div>
+      </div>
+      <div class="col-md-4">
+        <h3>Disk Space</h3>
+        <div id="diskSpaceGauge"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript for Initializing Gauges -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Assuming serverStats.cpuLoad, serverStats.memory, and serverStats.diskSpace contain the respective values
+
+      // CPU Load Gauge
+      var cpuLoadGauge = new JustGage({
+        id: 'cpuLoadGauge',
+        value: '<%- serverStats.cpuLoad || 0 %>',
+        min: 0,
+        max: 100,
+        title: 'CPU Load',
+        label: '%',
+        levelColorsGradient: true,
+      });
+
+      // Memory Gauge
+      var memoryGauge = new JustGage({
+        id: 'memoryGauge',
+        value: '<%- serverStats.memoryPercentage || 0 %>',
+        min: 0,
+        max: 100,
+        title: 'Memory Free',
+        label: '%',
+        levelColorsGradient: true,
+      });
+
+      // Disk Space Gauge
+      var diskSpaceGauge = new JustGage({
+        id: 'diskSpaceGauge',
+        value: '<%- serverStats.diskSpacePercentage || 0 %>',
+        min: 0,
+        max: 100,
+        title: 'Disk Space Free',
+        label: '%',
+        levelColorsGradient: true,
+      });
+    });
+  </script>
+</body>
+</html>
