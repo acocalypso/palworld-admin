@@ -30,6 +30,7 @@ const app = express();
 
 app.use(sessionMiddleware);
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); 
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -133,7 +134,6 @@ app.get('/server-stats/data', isAuthenticated, async (req, res) => {
 app.post('/admin-command/kick', isAuthenticated, async (req, res) => {
   try {
     const { steamId } = req.body; 
-    console.log(req);
     if (steamId) {
       const kickCommand = `KickPlayer ${steamId}`;
       await executeRconCommand(kickCommand);

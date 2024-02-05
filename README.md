@@ -9,13 +9,16 @@ Working Features:
 * local auth
 * show online players
 * show version number
+* Server Stats (Memory, disk, CPU)
+* Kick Players
+* Ban Players
 
 Planned features:
 
 * Login discord auth
-* Bann Players
-* Kick Players
-* Server Stats (Memory, disk, CPU)
+* Ban Players
+* List all banned players
+* Sent Broadcast messages
 
 Setup:
 
