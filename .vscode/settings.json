@@ -4,7 +4,9 @@
         "currentload",
         "palworld",
         "Pannel",
+        "playeruid",
         "resave",
-        "showplayers"
+        "showplayers",
+        "steamid"
     ]
 }
