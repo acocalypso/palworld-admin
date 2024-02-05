@@ -17,7 +17,8 @@ Planned features:
 
 * Login discord auth
 * Ban Players
-* List all banned players
+* List all banned players - once supported by rcon
+* Unban - once supported by rcon
 * Sent Broadcast messages
 
 Setup:

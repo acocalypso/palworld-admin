@@ -70,7 +70,7 @@ app.post('/create-admin', async (req, res) => {
 
     process.env.FIRST_LAUNCH = 'false';
 
-    return res.send('Admin account created. Restart the app without FIRST_LAUNCH to use local authentication.');
+    return res.send('Admin account created. Restart the app and set FIRST_LAUNCH=false in .env to use local authentication.');
   }
 
   return res.send('Admin account already created. Use local authentication.');
@@ -163,14 +163,48 @@ app.post('/admin-command/ban', isAuthenticated, async (req, res) => {
   }
 });
 
+// Update your get-players-info route
+
+app.get('/get-players-info', isAuthenticated, async (req, res) => {
+  try {
+    const rconResponseShowPlayers = await executeRconCommand('showplayers');
+    const playersInfoWithoutHeader = rconResponseShowPlayers.split('\n').slice(1).join('\n');
+
+    // Filter out entries with less than 3 values (name, playeruid, steamid)
+    const filteredPlayerInfo = playersInfoWithoutHeader
+      .split('\n')
+      .filter(row => {
+        const [, , steamid] = row.split(',');
+        return steamid && steamid.trim() !== '' && row.split(',').length === 3;
+      })
+      .join('\n');
+
+    res.json({ playersInfoWithoutHeader: filteredPlayerInfo });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error getting players info' });
+  }
+});
+
+
 app.get('/', isAuthenticated, async (req, res) => {
   try {
     const rconResponseShowPlayers = await executeRconCommand('showplayers');
     const playersInfoWithoutHeader = rconResponseShowPlayers.split('\n').slice(1).join('\n');
-    const onlinePlayerCount = playersInfoWithoutHeader.split('\n').length - 1;
+    
+    // Filter out entries where steamid is empty or undefined
+    const filteredPlayerInfo = playersInfoWithoutHeader
+      .split('\n')
+      .filter(row => {
+        const [, , steamid] = row.split(',');
+        return steamid && steamid.trim() !== '';
+      })
+      .join('\n');
+
+    const onlinePlayerCount = filteredPlayerInfo.split('\n').length;
     const rconResponseInfo = await executeRconCommand('info');
 
-    res.render('index', { onlinePlayerCount, playersInfoWithoutHeader, rconResponseInfo: rconResponseInfo || '', user: req.user });
+    res.render('index', { onlinePlayerCount, playersInfoWithoutHeader: filteredPlayerInfo, rconResponseInfo: rconResponseInfo || '', user: req.user });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

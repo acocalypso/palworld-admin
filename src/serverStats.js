@@ -13,7 +13,6 @@ const getServerStats = async () => {
     // Calculate percentages
     const memoryPercentage = (memory.active / memory.total) * 100;
     const diskSpacePercentage = ((disk[0].size - disk[0].used) / disk[0].size) * 100;
-    console.log("memory: %s, disk: %s, cpu: %s",memoryPercentage, diskSpacePercentage, cpuLoad.currentLoad)
 
     // Return the server stats with calculated percentages
     return {

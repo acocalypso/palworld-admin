@@ -6,10 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <title>Admin Pannel</title>
+  <title>Admin Panel</title>
   <style>
     body {
       padding-top: 56px; /* Adjust based on the height of your navbar */
+    }
+
+    /* Style for the timer */
+    #refreshTimer {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: #f8f9fa;
+      padding: 5px 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
@@ -19,22 +30,22 @@
 
   <!-- Main content -->
   <div class="container mt-4">
-    <h1 class="text-center">Online Player: <%= onlinePlayerCount %></h1>
+    <h1 class="text-center">Online Player: <span id="onlinePlayerCount"><%= onlinePlayerCount %></span></h1>
 
     <!-- Display the RCON response in a Bootstrap table -->
-    <% if (playersInfoWithoutHeader.trim() !== '') { %>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Player UID</th>
-            <th>Steam ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% playersInfoWithoutHeader.split('\n').forEach(row => { %>
-            <% const [name, playeruid, steamid] = row.split(','); %>
+    <table id="playersTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Player UID</th>
+          <th>Steam ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% playersInfoWithoutHeader.split('\n').forEach(row => { %>
+          <% const [name, playeruid, steamid] = row.split(','); %>
+          <% if (steamid && steamid.trim() !== '') { %>
             <tr>
               <td><%= name %></td>
               <td><%= playeruid %></td>
@@ -44,13 +55,19 @@
                 <button class="btn btn-warning" onclick="banPlayer('<%= steamid %>')">Ban</button>                
               </td>
             </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    <% } else { %>
+          <% } %>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <% if (playersInfoWithoutHeader.trim() === '') { %>
       <p class="text-center">No players online</p>
     <% } %>
   </div>
+
+  <!-- Timer element -->
+  <div id="refreshTimer">Next refresh in <span id="timerValue">30</span> seconds</div>
+
   <script>
     function kickPlayer(steamid) {
       fetch('/admin-command/kick', {
@@ -61,7 +78,10 @@
         body: JSON.stringify({ steamId: steamid }),
       })
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data);
+        updatePlayerTable();
+      })
       .catch(error => console.error('Error kicking player:', error));
     }
   
@@ -74,11 +94,73 @@
         body: JSON.stringify({steamId: steamid}),
       })
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => {
+        console.log(data);
+        updatePlayerTable();
+      })
       .catch(error => console.error('Error banning player:', error));
     }
+
+    function updatePlayerTable() {
+      fetch('/get-players-info')
+        .then(response => response.json())
+        .then(data => {
+          const playersTable = document.getElementById('playersTable');
+          const onlinePlayerCountElement = document.getElementById('onlinePlayerCount');
+          const timerValueElement = document.getElementById('timerValue');
+
+          if (data.playersInfoWithoutHeader.trim() !== '') {
+            playersTable.querySelector('tbody').innerHTML = '';
+            data.playersInfoWithoutHeader.split('\n').forEach(row => {
+              const [name, playeruid, steamid] = row.split(',');
+              if (steamid && steamid.trim() !== '') {
+                const newRow = `<tr>
+                  <td>${name}</td>
+                  <td>${playeruid}</td>
+                  <td>${steamid}</td>
+                  <td>
+                    <button class="btn btn-danger" onclick="kickPlayer('${steamid}')">Kick</button>
+                    <button class="btn btn-warning" onclick="banPlayer('${steamid}')">Ban</button>                
+                  </td>
+                </tr>`;
+                playersTable.querySelector('tbody').innerHTML += newRow;
+              }
+            });
+
+            onlinePlayerCountElement.innerText = data.playersInfoWithoutHeader.split('\n').length;
+          } else {
+            playersTable.querySelector('tbody').innerHTML = '';
+            onlinePlayerCountElement.innerText = 0;
+          }
+
+          // Restart the timer
+          startTimer();
+        })
+        .catch(error => console.error('Error updating player table:', error));
+    }
+
+    function startTimer() {
+      let timerValue = 30;
+      const timerValueElement = document.getElementById('timerValue');
+      timerValueElement.innerText = timerValue;
+
+      const countdownInterval = setInterval(() => {
+        timerValue--;
+        timerValueElement.innerText = timerValue;
+        if (timerValue === 0) {
+          clearInterval(countdownInterval);
+          updatePlayerTable();
+        }
+      }, 1000);
+    }
+
+    // Initial start of the timer
+    startTimer();
+
+    // Bootstrap JS and Popper.js
+    const bootstrapScript = document.createElement('script');
+    bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
+    document.body.appendChild(bootstrapScript);
   </script>
-  <!-- Bootstrap JS and Popper.js -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
