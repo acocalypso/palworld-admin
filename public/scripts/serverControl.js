@@ -4,6 +4,7 @@ function startContainer(containerId) {
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ containerId })
   })
     .then(response => response.json())
     .then(data => {
@@ -30,6 +31,7 @@ function stopContainer(containerId) {
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify({ containerId })
   })
     .then(response => response.json())
     .then(data => {
