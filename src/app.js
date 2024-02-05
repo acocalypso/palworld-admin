@@ -176,6 +176,39 @@ app.post('/admin-command/broadcast', isAuthenticated, async (req, res) => {
   }
 });
 
+app.use('/server-control', isAuthenticated, async (req, res) => {
+  try {
+    const containers = await getPalworldContainers();
+    res.render('serverControl', { containers });
+  } catch (error) {
+    console.error('Error fetching Palworld containers:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.post('/server-control/start/:id', isAuthenticated, async (req, res) => {
+  const containerId = req.params.id;
+  try {
+    await startContainer(containerId);
+    res.json({ success: true, message: 'Container started successfully' });
+  } catch (error) {
+    console.error('Error starting Docker container:', error);
+    res.status(500).json({ success: false, message: 'Error starting container' });
+  }
+});
+
+
+app.post('/server-control/stop/:id', isAuthenticated, async (req, res) => {
+  const containerId = req.params.id;
+  try {
+    await stopContainer(containerId);
+    res.json({ success: true, message: 'Container stopped successfully' });
+  } catch (error) {
+    console.error('Error stopping Docker container:', error);
+    res.status(500).json({ success: false, message: 'Error stopping container' });
+  }
+});
+
 
 app.get('/get-players-info', isAuthenticated, async (req, res) => {
   try {
@@ -229,4 +262,21 @@ function isAuthenticated(req, res, next) {
     return next();
   }
   res.redirect('/login');
+}
+
+async function getPalworldContainers() {
+  const Docker = require('dockerode');
+  const docker = new Docker();
+
+  const containers = await docker.listContainers({ all: true });
+
+  // Filter containers that have the "Palworld" image
+  const palworldContainers = containers.filter(container =>
+    container.Image.toLowerCase().includes('palworld')
+  );
+
+  return palworldContainers.map(container => ({
+    id: container.Id,
+    name: container.Names[0],
+  }));
 }
