@@ -12,6 +12,7 @@ Working Features:
 * Server Stats (Memory, disk, CPU)
 * Kick Players
 * Ban Players
+* Sent Broadcast messages
 
 Planned features:
 
@@ -19,7 +20,8 @@ Planned features:
 * Ban Players
 * List all banned players - once supported by rcon
 * Unban - once supported by rcon
-* Sent Broadcast messages
+* Stop Server
+* manage dockerized Palworld server
 
 Setup:
 
