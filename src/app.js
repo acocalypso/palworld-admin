@@ -163,14 +163,25 @@ app.post('/admin-command/ban', isAuthenticated, async (req, res) => {
   }
 });
 
-// Update your get-players-info route
+app.post('/admin-command/broadcast', isAuthenticated, async (req, res) => {
+  try {
+    const { message } = req.body;
+    const broadcastCommand = `Broadcast "${message}"`;
+    await executeRconCommand(broadcastCommand);
+
+    res.json({ success: true, message: `Broadcasted: ${message}` });
+  } catch (error) {
+    console.error('Error broadcasting message:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
 
 app.get('/get-players-info', isAuthenticated, async (req, res) => {
   try {
     const rconResponseShowPlayers = await executeRconCommand('showplayers');
     const playersInfoWithoutHeader = rconResponseShowPlayers.split('\n').slice(1).join('\n');
 
-    // Filter out entries with less than 3 values (name, playeruid, steamid)
     const filteredPlayerInfo = playersInfoWithoutHeader
       .split('\n')
       .filter(row => {

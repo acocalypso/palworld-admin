@@ -30,6 +30,14 @@
 
   <!-- Main content -->
   <div class="container mt-4">
+
+    <!-- Broadcast Message Box -->
+    <div class="mb-3">
+      <label for="broadcastMessage" class="form-label">Broadcast Message:</label>
+      <input type="text" class="form-control" id="broadcastMessage">
+      <button class="btn btn-primary mt-2" onclick="broadcastMessage()">Broadcast</button>
+    </div>
+    
     <h1 class="text-center">Online Player: <span id="onlinePlayerCount"><%= onlinePlayerCount %></span></h1>
 
     <!-- Display the RCON response in a Bootstrap table -->
@@ -51,8 +59,8 @@
               <td><%= playeruid %></td>
               <td><%= steamid %></td>
               <td>
-                <button class="btn btn-danger" onclick="kickPlayer('<%= steamid %>')">Kick</button>
-                <button class="btn btn-warning" onclick="banPlayer('<%= steamid %>')">Ban</button>                
+                <button class="btn btn-warning" onclick="kickPlayer('<%= steamid %>')">Kick</button>
+                <button class="btn btn-danger" onclick="banPlayer('<%= steamid %>')">Ban</button>                
               </td>
             </tr>
           <% } %>
@@ -100,6 +108,43 @@
       })
       .catch(error => console.error('Error banning player:', error));
     }
+    
+    function broadcastMessage() {
+    let message = document.getElementById('broadcastMessage').value;
+    
+    // Replace spaces with thin spaces
+    message = message.replace(/ /g, '\u2009');
+
+    fetch('/admin-command/broadcast', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+
+      // Clear the message box
+      document.getElementById('broadcastMessage').value = '';
+
+      // Display success or failure popup
+      if (data.success) {
+        alert('Broadcast message sent successfully!');
+      } else {
+        alert('Error sending broadcast message. Please try again.');
+      }
+
+      updatePlayerTable();
+    })
+    .catch(error => {
+      console.error('Error broadcasting message:', error);
+      
+      // Display error popup
+      alert('Error sending broadcast message. Please try again.');
+    });
+  }
 
     function updatePlayerTable() {
       fetch('/get-players-info')
