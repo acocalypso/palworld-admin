@@ -29,11 +29,11 @@
         <div id="cpuLoadGauge"></div>
       </div>
       <div class="col-md-4">
-        <h3>Memory</h3>
+        <h3>Memory Free</h3>
         <div id="memoryGauge"></div>
       </div>
       <div class="col-md-4">
-        <h3>Disk Space</h3>
+        <h3>Disk Space Free</h3>
         <div id="diskSpaceGauge"></div>
       </div>
     </div>
@@ -50,7 +50,7 @@
       // CPU Load Gauge
       var cpuLoadGauge = new JustGage({
         id: 'cpuLoadGauge',
-        value: '<%- serverStats.cpuLoad || 0 %>',
+        value: '<%= JSON.stringify(serverStats.cpuLoad || 0) %>',
         min: 0,
         max: 100,
         title: 'CPU Load',
