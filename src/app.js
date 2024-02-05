@@ -124,13 +124,27 @@ app.use('/server-stats', async (req, res, next) => {
 app.get('/server-stats', isAuthenticated, async (req, res) => {
   try {
     // Retrieve server stats (you need to implement this part)
-    const serverStats = await getServerStats();
+    //const serverStats = await getServerStats();
   
     // Render the server stats template
-    res.render('server-stats', { serverStats, user: req.user });
+    // res.render('server-stats', { serverStats, user: req.user });
+    res.render('server-stats', { user: req.user });
   } catch (error) {
     console.log("Error getting server stats:", error);
     res.status(500).send(error);
+  }
+});
+
+app.get('/server-stats/data', isAuthenticated, async (req, res) => {
+  try {
+    // Retrieve server stats
+    const serverStats = await getServerStats();
+
+    // Send the server stats as JSON
+    res.json(serverStats);
+  } catch (error) {
+    console.log("Error getting server stats:", error);
+    res.status(500).json({ error: 'Error getting server stats' });
   }
 });
 
