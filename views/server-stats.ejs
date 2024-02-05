@@ -9,13 +9,13 @@
   <title>Server Stats</title>
   <style>
     body {
-      padding-top: 56px; /* Adjust based on the height of your navbar */
+      padding-top: 56px;
     }
   </style>
   <!-- Include Raphael library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
   <!-- Include JustGage library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.4.0/justgage.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.6.1/justgage.min.js"></script>
 </head>
 <body>
   <!-- Header Partial -->
@@ -45,9 +45,6 @@
   <!-- JavaScript for Initializing Gauges -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Assuming serverStats.cpuLoad, serverStats.memory, and serverStats.diskSpace contain the respective values
-
-      // CPU Load Gauge
       var cpuLoadGauge = new JustGage({
         id: 'cpuLoadGauge',
         value: '<%= JSON.stringify(serverStats.cpuLoad || 0) %>',
@@ -58,7 +55,6 @@
         levelColorsGradient: true,
       });
 
-      // Memory Gauge
       var memoryGauge = new JustGage({
         id: 'memoryGauge',
         value: '<%- serverStats.memoryPercentage || 0 %>',
@@ -69,7 +65,6 @@
         levelColorsGradient: true,
       });
 
-      // Disk Space Gauge
       var diskSpaceGauge = new JustGage({
         id: 'diskSpaceGauge',
         value: '<%- serverStats.diskSpacePercentage || 0 %>',
