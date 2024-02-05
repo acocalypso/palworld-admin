@@ -1,0 +1,16 @@
+/* public/css/styles.css */
+body {
+    padding-top: 56px; /* Adjust based on the height of your navbar */
+  }
+  
+  /* Style for the timer */
+  #refreshTimer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: #f8f9fa;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  

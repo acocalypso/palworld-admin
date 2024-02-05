@@ -6,6 +6,7 @@ const localAuth = require('../auth/localAuth');
 const flash = require('connect-flash');
 const { executeRconCommand } = require('../rcon/rcon');
 const { getServerStats } = require('./serverStats');
+const { getPalworldContainers } = require('./serverControl');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const db = require('./db');
@@ -31,6 +32,7 @@ const app = express();
 app.use(sessionMiddleware);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
+app.use(express.static('public'));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -262,21 +264,4 @@ function isAuthenticated(req, res, next) {
     return next();
   }
   res.redirect('/login');
-}
-
-async function getPalworldContainers() {
-  const Docker = require('dockerode');
-  const docker = new Docker();
-
-  const containers = await docker.listContainers({ all: true });
-
-  // Filter containers that have the "Palworld" image
-  const palworldContainers = containers.filter(container =>
-    container.Image.toLowerCase().includes('palworld')
-  );
-
-  return palworldContainers.map(container => ({
-    id: container.Id,
-    name: container.Names[0],
-  }));
 }
