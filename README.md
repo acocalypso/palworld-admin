@@ -13,13 +13,13 @@ Working Features:
 * Kick Players
 * Ban Players
 * Sent Broadcast messages
+* Stop Server
 
 Planned features:
 
 * Login discord auth
 * List all banned players - once supported by rcon
 * Unban - once supported by rcon
-* Stop Server
 * manage dockerized Palworld server
 
 Setup:
