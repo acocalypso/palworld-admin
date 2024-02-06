@@ -210,6 +210,7 @@ app.use('/server-control', isAuthenticated, async (req, res) => {
 
 app.post('/server-control/start/:id', isAuthenticated, async (req, res) => {
   const containerId = req.params.id;
+  console.log("con id: %s", containerId);
   try {
     await startContainer(containerId);
     res.json({ success: true, message: 'Container started successfully' });
@@ -218,7 +219,6 @@ app.post('/server-control/start/:id', isAuthenticated, async (req, res) => {
     res.status(500).json({ success: false, message: 'Error starting container' });
   }
 });
-
 
 app.post('/server-control/stop/:id', isAuthenticated, async (req, res) => {
   const containerId = req.params.id;

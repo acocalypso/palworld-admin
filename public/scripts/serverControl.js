@@ -1,36 +1,27 @@
 function startContainer(containerId) {
+  console.log('Starting container:', containerId);
+  
   fetch(`/server-control/start/${containerId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ containerId })
   })
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-
-      // Display success or failure alert
-      if (data.success) {
-        alert('Container started successfully');
-      } else {
-        alert('Error starting container. Please try again.');
-      }
+      alert('Container started successfully');
     })
     .catch(error => {
       console.error('Error starting container:', error);
-
-      // Display error alert for fetch error
       alert('Error starting container. Please try again.');
     });
 }
 
 function stopContainer(containerId) {
+  console.log('Stopping container:', containerId);
+  
   fetch(`/server-control/stop/${containerId}`, {
     method: 'POST',
     headers: {
@@ -42,22 +33,10 @@ function stopContainer(containerId) {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-
-      // Display success or failure alert
-      if (data.success) {
-        alert('Container stopped successfully');
-      } else {
-        alert('Error stopping container. Please try again.');
-      }
+      alert('Container stopped successfully');
     })
     .catch(error => {
       console.error('Error stopping container:', error);
-
-      // Display error alert for fetch error
       alert('Error stopping container. Please try again.');
     });
 }

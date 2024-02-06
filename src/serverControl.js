@@ -16,27 +16,39 @@ async function getPalworldContainers() {
 }
 
 async function startContainer(containerId) {
-  return new Promise((resolve, reject) => {
-    docker.getContainer(containerId).start((err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ success: true });
-      }
+  try {
+    await new Promise((resolve, reject) => {
+      docker.getContainer(containerId).start((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ success: true });
+        }
+      });
     });
-  });
+    return { success: true };
+  } catch (error) {
+    console.error('Error starting container:', error);
+    return { success: false, message: error.message };
+  }
 }
 
 async function stopContainer(containerId) {
-  return new Promise((resolve, reject) => {
-    docker.getContainer(containerId).stop((err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({ success: true });
-      }
+  try {
+    await new Promise((resolve, reject) => {
+      docker.getContainer(containerId).stop((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ success: true });
+        }
+      });
     });
-  });
+    return { success: true };
+  } catch (error) {
+    console.error('Error stopping container:', error);
+    return { success: false, message: error.message };
+  }
 }
 
 module.exports = {
