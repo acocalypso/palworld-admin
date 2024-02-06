@@ -1,5 +1,4 @@
 const Docker = require('dockerode');
-const { exec } = require('child_process');
 const docker = new Docker();
 
 async function getPalworldContainers() {
@@ -18,11 +17,11 @@ async function getPalworldContainers() {
 
 async function startContainer(containerId) {
   return new Promise((resolve, reject) => {
-    exec(`docker start ${containerId}`, (err, stdout, stderr) => {
+    docker.getContainer(containerId).start((err, data) => {
       if (err) {
         reject(err);
       } else {
-        resolve();
+        resolve({ success: true });
       }
     });
   });
@@ -30,11 +29,11 @@ async function startContainer(containerId) {
 
 async function stopContainer(containerId) {
   return new Promise((resolve, reject) => {
-    exec(`docker stop ${containerId}`, (err, stdout, stderr) => {
+    docker.getContainer(containerId).stop((err, data) => {
       if (err) {
         reject(err);
       } else {
-        resolve();
+        resolve({ success: true });
       }
     });
   });
