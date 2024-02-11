@@ -21,6 +21,7 @@ Planned features:
 * List all banned players - once supported by rcon
 * Unban - once supported by rcon
 * manage dockerized Palworld server
+* Multi Server Support
 
 Setup:
 
